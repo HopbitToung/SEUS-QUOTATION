@@ -200,6 +200,15 @@ table.pr-tbl td{border:1px solid #ccc;padding:4px 6px;font-size:10.5px}
 .cover-words{text-align:right;font-style:italic;margin-top:6px;font-size:12.5px;color:#0f2942}
 .sec-h{margin:13px 0 5px;color:#0f2942;font-size:12.5px}
 .pr-note-sm{font-size:9px;color:#888;margin-top:6px}
+
+.pr-title h1{color:#000 !important;white-space:nowrap;line-height:1.18}
+.pr-title-th{font-size:14px;font-weight:700;color:#000}
+.pr-meta b{color:#000 !important}
+.sec-h{color:#000 !important}
+.cover-words{color:#000 !important}
+.pr-head{border-bottom-color:#000}
+.pr-page{display:flex;flex-direction:column;min-height:250mm}
+.pr-foot{margin-top:auto;text-align:center;font-size:10px;color:#000;padding-top:10px;border-top:1px solid #bbb}
 </style>
 </head>
 <body>
@@ -447,7 +456,7 @@ function bahtText(n){n=Math.round((+n||0)*100)/100;var baht=Math.floor(n);var st
  function conv(numStr){numStr=String(+numStr);var L=numStr.length;if(L>6){var head=numStr.slice(0,L-6),tail=numStr.slice(L-6);return conv(head)+'ล้าน'+conv6(tail);}return conv6(numStr);}
  var res=(baht===0?'ศูนย์':conv(String(baht)))+'บาท';
  if(stg===0){res+='ถ้วน';}else{res+=conv(String(stg))+'สตางค์';}return res;}
-function prHeader(co,title,q){return '<div class="pr-formno">'+esc(co.formNo||'')+'</div><div class="pr-head"><div class="pr-brand">'+coLogo()+'<div class="pr-co">'+esc(co.name)+'<small>'+esc(co.addr)+' &middot; Tax ID '+esc(co.tax)+' &middot; Tel '+esc(co.tel)+(co.email?' &middot; '+esc(co.email):'')+'</small></div></div><div class="pr-title"><h1>'+title+'</h1><div style="font-family:monospace;font-weight:700">'+esc(q.docNo||'DRAFT')+' &nbsp;Rev '+q.rev+'</div></div></div>';}
+function prHeader(co,title,q){return '<div class="pr-formno">'+esc(co.formNo||'')+'</div><div class="pr-head"><div class="pr-brand">'+coLogo()+'<div class="pr-co">'+esc(co.name)+'<small>'+esc(co.addr)+' &middot; Tax ID '+esc(co.tax)+' &middot; Tel '+esc(co.tel)+(co.email?' &middot; '+esc(co.email):'')+'</small></div></div><div class="pr-title">'+prTitleHtml(title)+'<div style="font-family:monospace;font-weight:700">'+esc(q.docNo||'DRAFT')+' &nbsp;Rev '+q.rev+'</div></div></div>';}
 function pageCover(q,c,co){return '<div class="pr-wrap pr-page">'+prHeader(co,'QUOTATION / ใบเสนอราคา',q)+
  '<div class="pr-meta"><div><b>Quotation No:</b> '+esc(q.docNo)+'</div><div><b>Date:</b> '+new Date(q.updatedAt).toLocaleDateString()+'</div><div><b>Project:</b> '+esc(q.project)+'</div><div><b>Discipline:</b> '+esc(q.disc)+'</div><div><b>Customer:</b> '+esc(q.clientName)+'</div><div><b>Attention:</b> '+esc(q.attention||'-')+'</div><div><b>Site:</b> '+esc(q.site||'-')+'</div><div><b>Validity:</b> '+esc(q.validity)+'</div></div>'+
  '<div class="cover-box"><table class="pr-tbl"><tbody>'+
@@ -456,7 +465,7 @@ function pageCover(q,c,co){return '<div class="pr-wrap pr-page">'+prHeader(co,'Q
  (c.discount?'<tr><td>Discount</td><td class="r">-'+fmt2(c.discount)+'</td></tr>':'')+
  '<tr><td>Sub Total</td><td class="r">'+fmt2(c.sub)+'</td></tr>'+
  (q.vat?'<tr><td>VAT '+q.vat+'%</td><td class="r">'+fmt2(c.vat)+'</td></tr>':'')+
- '<tr class="grand"><td>GRAND TOTAL (THB)</td><td class="r">'+fmt2(c.total)+'</td></tr></tbody></table>'+
+ '<tr class="grand"><td>GRAND TOTAL (THB) '+(q.vat?'<span style="font-weight:400;font-size:11px">(Included VAT)</span>':'<span style="font-weight:400;font-size:11px">(Exclude VAT)</span>')+'</td><td class="r">'+fmt2(c.total)+'</td></tr></tbody></table>'+
  '<div class="cover-words">('+bahtText(c.total)+')</div></div>'+
  '<div class="pr-terms"><h4>Terms &amp; Conditions</h4><div><b>Delivery:</b> '+esc(q.duration||'-')+' &nbsp; <b>Payment:</b> '+esc(q.credit)+' &nbsp; <b>Validity:</b> '+esc(q.validity)+' &nbsp; <b>Warranty:</b> '+esc(q.warranty)+'</div>'+(q.milestones?'<div><b>Milestones:</b> '+esc(q.milestones)+'</div>':'')+(q.notes?'<div><b>Note:</b> '+esc(q.notes)+'</div>':'')+'</div>'+
  '<div class="pr-sign"><div><div class="ln"></div>Prepared by: '+esc(q.owner)+'<br>'+esc(co.name)+'</div><div><div class="ln"></div>Accepted by (Customer)<br>Date: ___/___/___</div></div></div>';}
@@ -472,7 +481,7 @@ function pageSummary(q,c,co){var order=['Electrical','Instrument','Mechanical','
  '<tr><td class="r">Sub Total (A+B)</td><td class="r" style="width:130px">'+fmt2(c.direct+c.indirect)+'</td></tr>'+
  (c.discount?'<tr><td class="r">Discount</td><td class="r">-'+fmt2(c.discount)+'</td></tr><tr><td class="r">Net Total</td><td class="r">'+fmt2(c.sub)+'</td></tr>':'')+
  (q.vat?'<tr><td class="r">VAT '+q.vat+'%</td><td class="r">'+fmt2(c.vat)+'</td></tr>':'')+
- '<tr class="grand"><td class="r">GRAND TOTAL (THB)</td><td class="r">'+fmt2(c.total)+'</td></tr></tbody></table>'+
+ '<tr class="grand"><td class="r">GRAND TOTAL (THB) '+(q.vat?'(Included VAT)':'(Exclude VAT)')+'</td><td class="r">'+fmt2(c.total)+'</td></tr></tbody></table>'+
  '<div class="cover-words">('+bahtText(c.total)+')</div></div>';}
 function pageBOQ(q,c,co){var codes=itemCodes(q.lines);var rows='';
  q.lines.forEach(function(l,i){if(l.kind==='group'){rows+='<tr class="pr-grp"><td class="c">'+codes[i]+'</td><td colspan="9">'+esc(l.desc)+' <span style="font-weight:400;font-size:9px">['+esc(l.cat||'Electrical')+']</span></td></tr>';return;}
@@ -484,7 +493,9 @@ function pageBOQ(q,c,co){var codes=itemCodes(q.lines);var rows='';
  '<tr class="pr-tot"><td colspan="5" class="r">Sub Total</td><td class="r"></td><td class="r">'+fmt2(c.mat)+'</td><td class="r"></td><td class="r">'+fmt2(c.lab)+'</td><td class="r">'+fmt2(c.direct)+'</td></tr>'+
  '<tr class="pr-tot"><td colspan="9" class="r">TOTAL DIRECT COST (THB)</td><td class="r">'+fmt2(c.direct)+'</td></tr></tbody></table>'+
  '<div class="pr-note-sm">Indirect cost &amp; grand total: see Cost Summary sheet.</div></div>';}
-function doQuotation(q){ensureQuote(q);var c=calc(q),co=DB.settings.company;document.getElementById('printArea').innerHTML=pageCover(q,c,co)+pageSummary(q,c,co)+pageBOQ(q,c,co);window.print();}
+function prTitleHtml(t){var p=String(t).split(' / ');return '<h1>'+esc(p[0])+(p[1]?'<br><span class="pr-title-th">'+esc(p[1])+'</span>':'')+'</h1>';}
+function prFoot(pg,tot){return '<div class="pr-foot">Page '+pg+' of '+tot+'</div>';}
+function doQuotation(q){ensureQuote(q);var c=calc(q),co=DB.settings.company;var T=3;var pages=[pageCover(q,c,co),pageSummary(q,c,co),pageBOQ(q,c,co)];var html=pages.map(function(p,i){var k=p.lastIndexOf('</div>');return p.slice(0,k)+prFoot(i+1,T)+p.slice(k);}).join('');document.getElementById('printArea').innerHTML=html;window.print();}
 load();
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 </script>
